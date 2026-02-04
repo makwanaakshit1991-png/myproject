@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login / Register - GrabIt</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+ 
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1D4ED8;
+            --bg-body: #F8FAFC;
+            --border: #E2E8F0;
+            --radius: 12px;
+            --danger: #EF4444;
+        }
+ 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+        }
+ 
+        .auth-card {
+            background: white;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+ 
+        .logo {
+            font-size: 2rem; font-weight: 800; color: var(--primary);
+            margin-bottom: 8px; display: inline-flex; align-items: center; gap: 8px;
+        }
+ 
+        .input-group { margin-bottom: 16px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: #333; }
+        .input-field {
+            width: 100%; padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px; font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .input-field:focus { border-color: var(--primary); outline: none; }
+ 
+        .btn {
+            width: 100%; padding: 14px;
+            background: var(--primary); color: white;
+            border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: 0.2s; margin-top: 10px;
+        }
+        .btn:hover { background: var(--primary-dark); }
+ 
+        .toggle-text {
+            margin-top: 20px; font-size: 0.9rem; color: var(--primary);
+            cursor: pointer; font-weight: 500;
+        }
+        .toggle-text:hover { text-decoration: underline; }
+ 
+        .error-msg {
+            color: var(--danger); font-size: 0.85rem; margin-top: 5px; display: none;
+        }
+ 
+        /* Toggle Logic */
+        .hidden { display: none; }
+</style>
+</head>
+<body>
+ 
+    <div class="auth-card">
+<div class="logo"><i class="ri-store-2-fill"></i> GrabIt</div>
+<!-- LOGIN FORM -->
+<div id="loginFormContainer">
+<p style="color: #64748B; margin-bottom: 24px;">Welcome back</p>
+<form id="loginForm">
+<div class="input-group">
+<label>Username</label>
+<input type="text" id="loginUser" class="input-field" required>
+</div>
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="loginPass" class="input-field" required>
+</div>
+<div id="loginError" class="error-msg">Invalid credentials</div>
+<button type="submit" class="btn">Sign In</button>
+</form>
+<div class="toggle-text" onclick="toggleView('register')">Don't have an account? Register</div>
+</div>
+ 
+        <!-- REGISTER FORM -->
+<div id="registerFormContainer" class="hidden">
+<p style="color: #64748B; margin-bottom: 24px;">Create new account</p>
+<form id="registerForm">
+<div class="input-group">
+<label>Full Name</label>
+<input type="text" id="regName" class="input-field" placeholder="Ansh Anghan" required>
+</div>
+<div class="input-group">
+<label>Username</label>
+<input type="text" id="regUser" class="input-field" placeholder="Anshang123" required>
+</div>
+<div class="input-group">
+<label>Email</label>
+<input type="email" id="regEmail" class="input-field" placeholder="Ansh@example.com" required>
+<div id="emailError" class="error-msg">Invalid email format</div>
+</div>
+<div class="input-group">
+<label>Phone Number</label>
+<input type="tel" id="regPhone" class="input-field" placeholder="1234567890" required>
+<div id="phoneError" class="error-msg">Must be numbers only (10 digits)</div>
+</div>
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="regPass" class="input-field" required>
+</div>
+<div id="regError" class="error-msg"></div>
+<button type="submit" class="btn">Create Account</button>
+</form>
+<div class="toggle-text" onclick="toggleView('login')">Already have an account? Login</div>
+</div>
+</div>
+ 
+    <script>
+        // Toggle between Login and Register views
+        function toggleView(view) {
+            if (view === 'register') {
+                document.getElementById('loginFormContainer').classList.add('hidden');
+                document.getElementById('registerFormContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('registerFormContainer').classList.add('hidden');
+                document.getElementById('loginFormContainer').classList.remove('hidden');
+            }
+            // Clear errors
+            document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+        }
+ 
+        // Helper: Validate Email format
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+ 
+        // Helper: Validate Phone (10 digits only)
+        function validatePhone(phone) {
+            return /^\d{10}$/.test(phone);
+        }
+ 
+        // --- REGISTER LOGIC ---
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const username = document.getElementById('regUser').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPass').value;
+            const errorMsg = document.getElementById('regError');
+            const emailErr = document.getElementById('emailError');
+            const phoneErr = document.getElementById('phoneError');
+ 
+            // Reset errors
+            errorMsg.style.display = 'none';
+            emailErr.style.display = 'none';
+            phoneErr.style.display = 'none';
+ 
+            // Client-Side Validation (as per project requirements)
+            if (!validateEmail(email)) {
+                emailErr.style.display = 'block';
+                return;
+            }
+            if (!validatePhone(phone)) {
+                phoneErr.style.display = 'block';
+                return;
+            }
+ 
+            // Check if user already exists
+            let existingUsers = JSON.parse(localStorage.getItem('marketplaceUsers') || "[]");
+            const userExists = existingUsers.find(u => u.username === username || u.email === email);
+ 
+            if (userExists) {
+                errorMsg.innerText = "Username or Email already registered.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+ 
+            // Save new user
+            const newUser = { name, username, email, phone, password };
+            existingUsers.push(newUser);
+            localStorage.setItem('marketplaceUsers', JSON.stringify(existingUsers));
+ 
+            alert("Registration Successful! Please log in.");
+            toggleView('login');
+        });
+ 
+        // --- LOGIN LOGIC ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+ 
+            const usernameInput = document.getElementById('loginUser').value;
+            const passwordInput = document.getElementById('loginPass').value;
+            const errorMsg = document.getElementById('loginError');
+ 
+            // Get stored users
+            let existingUsers = JSON.parse(localStorage.getItem('marketplaceUsers') || "[]");
+ 
+            // Find user match
+            const validUser = existingUsers.find(u => u.username === usernameInput && u.password === passwordInput);
+ 
+            if (validUser) {
+                // Save current session info (Name + Username)
+                localStorage.setItem('currentUser', JSON.stringify({
+                    username: validUser.username,
+                    name: validUser.name
+                }));
+                window.location.href = 'home.html';
+            } else {
+                errorMsg.innerText = "Invalid Username or Password.";
+                errorMsg.style.display = 'block';
+            }
+        });
+</script>
+</body>
+</html>
